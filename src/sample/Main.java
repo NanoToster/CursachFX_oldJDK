@@ -13,8 +13,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-//        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        Parent root = FXMLLoader.load(getClass().getResource("git/git.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("myFx/mainWindow.fxml"));
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 1000, 700));
         primaryStage.show();

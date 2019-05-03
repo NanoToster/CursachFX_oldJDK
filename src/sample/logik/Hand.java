@@ -1,0 +1,41 @@
+package sample.logik;
+
+import org.opencv.core.Point;
+
+import java.util.List;
+import java.util.ArrayList;
+
+public class Hand {
+    private List<Point> fingers;
+    private Point center;
+    private List<Point> contour;
+
+    public Hand() {
+        fingers = new ArrayList<>();
+        contour = new ArrayList<>();
+    }
+
+    public List<Point> getFingers() {
+        return fingers;
+    }
+
+    public void setFingers(List<Point> fingers) {
+        this.fingers = fingers;
+    }
+
+    public Point getCenter() {
+        return center;
+    }
+
+    public void setCenter(Point center) {
+        this.center = center;
+    }
+
+    public List<Point> getContour() {
+        return contour;
+    }
+
+    public void setContour(List<Point> contour) {
+        this.contour = contour;
+    }
+}

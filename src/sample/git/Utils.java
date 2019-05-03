@@ -9,39 +9,25 @@ import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import sample.logik.Params;
 
-/**
- * Provide general purpose methods for handling OpenCV-JavaFX data conversion.
- * Moreover, expose some "low level" methods for matching few JavaFX behavior.
- *
- * @author <a href="mailto:luigi.derussis@polito.it">Luigi De Russis</a>
- * @author <a href="http://max-z.de">Maximilian Zuleger</a>
- * @version 1.0 (2016-09-17)
- * @since 1.0
- */
+import static org.opencv.imgproc.Imgproc.circle;
+import static org.opencv.imgproc.Imgproc.rectangle;
+
+
 public final class Utils {
-    /**
-     * Convert a Mat object (OpenCV) in the corresponding Image for JavaFX
-     *
-     * @param frame the {@link Mat} representing the current frame
-     * @return the {@link Image} to show
-     */
-    public static Image mat2Image(Mat frame) {
+
+    public static Image mat2Image(Mat frame, Params params) {
         try {
-            return SwingFXUtils.toFXImage(matToBufferedImage(frame), null);
+            return SwingFXUtils.toFXImage(matToBufferedImage(frame, params), null);
         } catch (Exception e) {
             System.err.println("Cannot convert the Mat obejct: " + e);
             return null;
         }
     }
 
-    /**
-     * Generic method for putting element running on a non-JavaFX thread on the
-     * JavaFX thread, to properly update the UI
-     *
-     * @param property a {@link ObjectProperty}
-     * @param value    the value to set for the given {@link ObjectProperty}
-     */
     public static <T> void onFXThread(final ObjectProperty<T> property, final T value) {
         Platform.runLater(() -> {
             property.set(value);
@@ -49,7 +35,8 @@ public final class Utils {
     }
 
 
-    private static BufferedImage matToBufferedImage(Mat original) {
+    private static BufferedImage matToBufferedImage(Mat original, Params params) {
+        original = drawRect(original, params);
         // init
         BufferedImage image = null;
         int width = original.width(), height = original.height(), channels = original.channels();
@@ -65,5 +52,14 @@ public final class Utils {
         System.arraycopy(sourcePixels, 0, targetPixels, 0, sourcePixels.length);
 
         return image;
+    }
+
+    public static Mat drawRect(Mat original, Params params){
+        rectangle(original,
+                new Rect(original.width() / 2, original.height() / 3,
+                        params.getRectSearchAreaX() * 2,
+                        params.getRectSearchAreaY() * 2),
+                new Scalar(255,0,0),4,8,0);
+        return original;
     }
 }
