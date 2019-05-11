@@ -5,7 +5,6 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Moments;
-import org.opencv.videoio.Videoio;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,30 +13,12 @@ import static org.bytedeco.javacpp.opencv_imgproc.CV_CHAIN_APPROX_NONE;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_RETR_EXTERNAL;
 import static org.opencv.imgproc.Imgproc.*;
 
-import org.bytedeco.javacpp.indexer.*;
-
 
 public class HandDetector {
     Params param;
 
     public HandDetector() {
-        param = new Params();
-    }
-
-    public List<Hand> detect(Mat depthMap, List<Hand> hands, Params param) {
-        double[] doubles = new double[1];
-        doubles[0] = 255.0;
-        for (int y = param.getWhereSearchY() - param.getRectSearchAreaY(); y < param.getWhereSearchY() + param.getRectSearchAreaY(); y++) {
-            for (int x = param.getWhereSearchX() - param.getRectSearchAreaX(); x < param.getWhereSearchX() + param.getRectSearchAreaX(); x++) {
-                if (depthMap.get(y, x) == doubles){
-                    line(depthMap, new Point(x-10, y),
-                            new Point(x+10, y), new Scalar(255, 255, 255), 1);
-                }
-//                depthMap.put(y, x, doubles);
-
-            }
-        }
-        return hands;
+        param = Params.getInstance();
     }
 
     public List<Hand> detect(Mat depthMap, List<Hand> hands) {
@@ -50,7 +31,6 @@ public class HandDetector {
         if (!contours.isEmpty()) {
             for (int i = 0; i < contours.size(); i++) {
                 if (contourArea(contours.get(i)) > param.getArea()) {
-                    System.out.println(contourArea(contours.get(i)));
                     Hand tmp = new Hand();
                     Moments m = moments(contours.get(i));
                     tmp.setCenter(new Point(m.m10 / m.m00, m.m01 / m.m00));
@@ -69,10 +49,10 @@ public class HandDetector {
                             double z = rotation(pntContour, j, param.getR());
                             if (equal && z < 0) {
                                 tmp.getFingers().add(pntContour[j]);
+                            } else if (equal && z > 0){ // елсе иф полностью самодеятельность
+                                tmp.getPereponki().add(pntContour[j]);
                             }
                         }
-
-
                     }
                     tmp.setContour(contours.get(i).toList());
                     hands.add(tmp);
@@ -122,6 +102,25 @@ public class HandDetector {
                 circle(image, hands.get(i).getFingers().get(j), 10, new Scalar(255, 255, 255), 2);
                 line(image, hands.get(i).getCenter(), hands.get(i).getFingers().get(j), new Scalar(255, 255, 255), 4);
             }
+            System.out.println(fingersSize);
+        }
+        return image;
+    }
+
+    public Mat drawHandsColor(Mat image, List<Hand> hands) {
+        int size = hands.size();
+        for (int i = 0; i < size; i++) {
+            int fingersSize = hands.get(i).getFingers().size();
+            circle(image, hands.get(i).getCenter(), 20, new Scalar(128, 128, 128), 2);
+            for (int j = 0; j < fingersSize; j++) {
+                circle(image, hands.get(i).getFingers().get(j), 10, new Scalar(0, 0, 255), 2);
+                line(image, hands.get(i).getCenter(), hands.get(i).getFingers().get(j), new Scalar(255, 0, 0), 4);
+            }
+            int pereponkiSize = hands.get(i).getPereponki().size();
+            for (int j = 0; j < pereponkiSize; j++) {
+                circle(image, hands.get(i).getPereponki().get(j), 10, new Scalar(0, 255, 0), 2);
+            }
+
             System.out.println(fingersSize);
         }
         return image;

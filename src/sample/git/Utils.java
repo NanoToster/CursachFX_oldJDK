@@ -19,9 +19,9 @@ import static org.opencv.imgproc.Imgproc.rectangle;
 
 public final class Utils {
 
-    public static Image mat2Image(Mat frame, Params params) {
+    public static Image mat2Image(Mat frame) {
         try {
-            return SwingFXUtils.toFXImage(matToBufferedImage(frame, params), null);
+            return SwingFXUtils.toFXImage(matToBufferedImage(frame), null);
         } catch (Exception e) {
             System.err.println("Cannot convert the Mat obejct: " + e);
             return null;
@@ -35,8 +35,8 @@ public final class Utils {
     }
 
 
-    private static BufferedImage matToBufferedImage(Mat original, Params params) {
-        original = drawRect(original, params);
+    private static BufferedImage matToBufferedImage(Mat original) {
+        original = drawRect(original);
         // init
         BufferedImage image = null;
         int width = original.width(), height = original.height(), channels = original.channels();
@@ -54,12 +54,16 @@ public final class Utils {
         return image;
     }
 
-    public static Mat drawRect(Mat original, Params params){
+    public static Mat drawRect(Mat original){
+        Params params = Params.getInstance();
+        int rectWidth = params.getSearchRectWidth();
+        int rectHeight = params.getSearchRectHeight();
+        int startX = original.width() / 2 - rectWidth / 2;
+        int startY = original.height() / 2 - rectHeight / 2;
         rectangle(original,
-                new Rect(original.width() / 2, original.height() / 3,
-                        params.getRectSearchAreaX() * 2,
-                        params.getRectSearchAreaY() * 2),
+                new Rect(startX, startY, rectWidth, rectHeight),
                 new Scalar(255,0,0),4,8,0);
         return original;
     }
+
 }

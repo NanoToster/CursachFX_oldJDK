@@ -7,11 +7,13 @@ import java.util.ArrayList;
 
 public class Hand {
     private List<Point> fingers;
+    private List<Point> pereponki;
     private Point center;
     private List<Point> contour;
 
     public Hand() {
         fingers = new ArrayList<>();
+        pereponki = new ArrayList<>();
         contour = new ArrayList<>();
     }
 
@@ -37,5 +39,9 @@ public class Hand {
 
     public void setContour(List<Point> contour) {
         this.contour = contour;
+    }
+
+    public List<Point> getPereponki() {
+        return pereponki;
     }
 }
