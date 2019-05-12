@@ -1,4 +1,4 @@
-package sample.logik;
+package handAutentification.logik;
 
 public class Params {
     private static Params instance = null;

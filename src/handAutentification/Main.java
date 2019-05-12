@@ -1,4 +1,4 @@
-package sample;
+package handAutentification;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

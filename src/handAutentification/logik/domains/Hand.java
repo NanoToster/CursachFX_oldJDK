@@ -1,4 +1,4 @@
-package sample.logik;
+package handAutentification.logik.domains;
 
 import org.opencv.core.Point;
 

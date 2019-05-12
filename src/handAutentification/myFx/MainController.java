@@ -1,35 +1,33 @@
-package sample.myFx;
+package handAutentification.myFx;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.Videoio;
-import sample.git.Utils;
+import handAutentification.services.Utils;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.MalformedURLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
-import sample.logik.Hand;
-import sample.logik.HandDetector;
-import sample.logik.Params;
-import sample.myFx.picShow.PicShowController;
+import handAutentification.myFx.picShow.PicShowController;
 
-import static org.opencv.core.CvType.*;
 import static org.opencv.imgproc.Imgproc.*;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 import static org.opencv.videoio.Videoio.CV_CAP_OPENNI;
@@ -39,13 +37,10 @@ public class MainController {
     private Button button;
 
     @FXML
+    private Button choosePhotoButton;
+
+    @FXML
     private ImageView currentFrame;
-
-    @FXML
-    private Slider treshold;
-
-    @FXML
-    private Slider thresh;
 
     private ScheduledExecutorService timer;
     private VideoCapture capture = new VideoCapture(CV_CAP_OPENNI);
@@ -54,39 +49,39 @@ public class MainController {
     private static int cameraId = 0;
 
     @FXML
-    void initialize() {
-        treshold.setValue(50);
-        thresh.setValue(50);
-
+    private void initialize() {
         capture.set(Videoio.CV_CAP_PROP_FRAME_WIDTH, width);
         capture.set(Videoio.CV_CAP_PROP_FRAME_HEIGHT, height);
 
         button.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.SPACE)) {
                 Mat frame = grabFrame();
-
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                            "picShow/picShow.fxml"));
-                    Parent parent = loader.load();
-
-                    PicShowController controller = loader.getController();
-                    controller.initMethod(frame);
-
-                    Stage stage = new Stage();
-                    stage.setTitle("Hand image");
-                    stage.setScene(new Scene(parent, 1000, 700));
-                    stage.show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                startPicShowWindow(frame);
             }
         });
-//        button.fire();
     }
 
     @FXML
-    protected void startCamera(ActionEvent event) {
+    private void choosePhotoAction(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File("C:\\Users\\NanoToster\\OneDrive\\6 Семестр\\Java\\CursachFX_oldJDK\\goodPhoto\\"));
+        File file = fileChooser.showOpenDialog(new Stage());
+        if (file != null) {
+            System.out.println(file.getPath());
+            String localUrl;
+            try {
+                localUrl = file.toURI().toURL().toString();
+                Mat mat = Utils.imageToMat(new Image(localUrl));
+                startPicShowWindow(mat);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    @FXML
+    private void startCamera(ActionEvent event) {
         if (!this.cameraActive) {
             this.capture.open(cameraId);
             if (this.capture.isOpened()) {
@@ -109,20 +104,34 @@ public class MainController {
         }
     }
 
+    private void startPicShowWindow(Mat frame) {
+        cvtColor(frame, frame, COLOR_RGB2BGR);
+        cvtColor(frame, frame, COLOR_BGR2GRAY);
+        Imgcodecs.imwrite("test.bmp", frame);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "picShow/picShow.fxml"));
+            Parent parent = loader.load();
+
+            PicShowController controller = loader.getController();
+            controller.initMethod(frame);
+
+            Stage stage = new Stage();
+            stage.setTitle("Hand image");
+            stage.setScene(new Scene(parent, 1000, 700));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private Mat grabFrame() {
         Mat frame = new Mat();
 
         if (this.capture.isOpened()) {
             try {
                 this.capture.read(frame);
-                Mat depthMap = new Mat();
-
-                this.capture.retrieve(depthMap, CV_16UC1);
-
-                cvtColor(frame, frame, COLOR_RGB2BGR);
-                depthMap = frame.clone();
-                cvtColor(depthMap, depthMap, COLOR_BGR2GRAY);
-                return depthMap;
+                return frame;
 
             } catch (Exception e) {
                 System.err.println("Exception during the image elaboration: " + e);
@@ -150,7 +159,7 @@ public class MainController {
         Utils.onFXThread(view.imageProperty(), image);
     }
 
-    protected void setClosed() {
+    private void setClosed() {
         this.stopAcquisition();
     }
 }

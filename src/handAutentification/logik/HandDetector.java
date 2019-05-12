@@ -1,10 +1,11 @@
-package sample.logik;
+package handAutentification.logik;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Moments;
+import handAutentification.logik.domains.Hand;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,7 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="807.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.myFx.picShow.PicShowController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="807.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="handAutentification.myFx.picShow.PicShowController">
    <children>
       <ImageView fx:id="imageViewLeft" fitHeight="615.0" fitWidth="534.0" layoutX="14.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="6.0" />
       <Slider fx:id="threshSlider" layoutX="33.0" layoutY="645.0" max="240.0" prefHeight="18.0" prefWidth="811.0" showTickLabels="true" showTickMarks="true" value="130.0" />
