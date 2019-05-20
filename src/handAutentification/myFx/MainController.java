@@ -1,6 +1,5 @@
 package handAutentification.myFx;
 
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,7 +15,6 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.Videoio;
 import handAutentification.services.Utils;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,9 +33,6 @@ import static org.opencv.videoio.Videoio.CV_CAP_OPENNI;
 public class MainController {
     @FXML
     private Button button;
-
-    @FXML
-    private Button choosePhotoButton;
 
     @FXML
     private ImageView currentFrame;
@@ -69,6 +64,7 @@ public class MainController {
         if (file != null) {
             System.out.println(file.getPath());
             String localUrl;
+            Integer i;
             try {
                 localUrl = file.toURI().toURL().toString();
                 Mat mat = Utils.imageToMat(new Image(localUrl));
@@ -118,7 +114,7 @@ public class MainController {
 
             Stage stage = new Stage();
             stage.setTitle("Hand image");
-            stage.setScene(new Scene(parent, 1000, 700));
+            stage.setScene(new Scene(parent, 1500, 700));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

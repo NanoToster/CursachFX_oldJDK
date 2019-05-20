@@ -12,6 +12,8 @@ public class Params {
     private int searchRectWidth;
     private int searchRectHeight;
 
+    private double biometricalMaxDifference;
+
     private Params() {
         this.area=1000;
         this.cosThreshold=0.5;
@@ -20,6 +22,7 @@ public class Params {
         this.step=16;
         this.searchRectHeight = 400;
         this.searchRectWidth = 300;
+        this.biometricalMaxDifference = 5;
     }
 
     public static Params getInstance(){
@@ -55,5 +58,9 @@ public class Params {
 
     public int getSearchRectHeight() {
         return searchRectHeight;
+    }
+
+    public double getBiometricalMaxDifference() {
+        return biometricalMaxDifference;
     }
 }

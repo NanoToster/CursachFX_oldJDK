@@ -1,12 +1,23 @@
 package handAutentification.myFx.picShow;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import handAutentification.logik.DAO.DAO;
+import handAutentification.logik.domains.BiometricalData;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import org.opencv.core.*;
 import handAutentification.services.Utils;
 import handAutentification.logik.domains.Hand;
@@ -23,9 +34,18 @@ public class PicShowController {
     private ImageView imageViewRight;
     @FXML
     private Slider threshSlider;
+    @FXML
+    private Button addToDbButton;
+    @FXML
+    private TextArea infoArea;
+    @FXML
+    private TextField nameTextField;
+    @FXML
+    private TextField surnameTextField;
 
     private Mat original;
     private Params params;
+    private BiometricalData biometricalData = null;
 
     @FXML
     void initialize() {
@@ -38,7 +58,15 @@ public class PicShowController {
         });
     }
 
-    private void processPhoto(){
+    @FXML
+    void addToDbAction(ActionEvent event) {
+        if (!nameTextField.getText().isEmpty() && !surnameTextField.getText().isEmpty()) {
+            int index = DAO.getInstance().addPersonToDB(nameTextField.getText(),
+                    surnameTextField.getText(), biometricalData);
+        }
+    }
+
+    private void processPhoto() {
         findFingers();
     }
 
@@ -70,11 +98,21 @@ public class PicShowController {
 
             HandProcesser handProcesser = new HandProcesser(hands.get(0), tmp);
             colorImage = handProcesser.init(colorImage);
+            biometricalData = handProcesser.getBiometricalData();
+            if (biometricalData != null) {
+                biometricalProcess(biometricalData);
+            }
         }
         Image image = Utils.mat2Image(tmp);
         imageViewLeft.setImage(image);
 
         image = Utils.mat2Image(colorImage);
         imageViewRight.setImage(image);
+    }
+
+    private void biometricalProcess(BiometricalData biometricalData) {
+        infoArea.setText(biometricalData.toString());
+        DAO db = DAO.getInstance();
+        infoArea.setText(db.findPerson(biometricalData));
     }
 }

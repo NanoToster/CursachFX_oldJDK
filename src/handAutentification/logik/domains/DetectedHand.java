@@ -14,29 +14,8 @@ public class DetectedHand {
     private Point middlePereponkaRight;
     private Point littlePereponka;
 
-    private String whichHand = null; // left or right
-
     public DetectedHand() {
 
-    }
-
-    public boolean isAlreadyFoundedFinger(Point checkFinger) {
-        // true - if already founded
-        if (checkFinger == bigFinger || checkFinger == foreFinger ||
-                checkFinger == middleFinger || checkFinger == noNameFinger ||
-                checkFinger == littlefinger) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public String getWhichHand() {
-        return whichHand;
-    }
-
-    public void setWhichHand(String whichHand) {
-        this.whichHand = whichHand;
     }
 
     public Point getBigFinger() {
